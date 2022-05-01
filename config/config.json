@@ -1,0 +1,11 @@
+{
+    "batch_size": 16,
+    "train_file_json_path": "data/train.json",
+    "test_file_json_path": "data/test.json",
+    "num_epoch": 5,
+    "gap_epoch_save_checkpoint": 5,
+    "device": "cuda:0",
+    "data_dim": 10,
+    "MAX_DATA_DIM": 1024,
+    "lr": 0.0001
+}
