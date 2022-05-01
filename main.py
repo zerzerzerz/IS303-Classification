@@ -1,5 +1,6 @@
 from model.model import Model
-from function.function import run, setup_seed
+from function.function import run
+from utils.utils import setup_seed
 import torch
 import argparse
 from os.path import isfile
