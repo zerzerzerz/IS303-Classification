@@ -1,6 +1,6 @@
 import os
 
-commit_string = "modify code structure"
+commit_string = "TPR, FPR, TNR, FNR"
 not_add = ['result', 'data', 'weights', 'results']
 for item in os.listdir():
     if item in not_add:
