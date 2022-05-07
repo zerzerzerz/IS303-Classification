@@ -7,6 +7,7 @@ from tqdm import tqdm
 from os import makedirs
 from os.path import join, isdir
 from utils.utils import save_json, Logger
+from sklearn.metrics import classification_report
 
 
 def normalize(tensor):
@@ -161,3 +162,37 @@ def run(
 
     model.cpu()
     torch.save(model,join(checkpoints_dir,'epoch_final.pt'))
+
+
+
+def get_report(
+    model,
+    args,
+):
+    
+
+    base_dir = args.output_dir
+    device = torch.device(args.device)
+    model.to(device)
+
+    test_dataset = MyDataset(args.test_file_json_path, data_dim=min(args.data_dim, args.MAX_DATA_DIM))
+    test_dataloader = DataLoader(test_dataset, batch_size=args.batch_size, shuffle=False, drop_last=True)
+        
+    with torch.set_grad_enabled(False):
+        model.eval()
+        gts = []
+        preds = []
+        for item in tqdm(test_dataloader):
+            img = normalize(item[0].to(device))
+            label = item[1].to(device).squeeze()
+            label_pred_distribution = model(img)
+
+            label_pred = label_pred_distribution.argmax(dim=1,keepdim=False).squeeze().to(dtype=torch.int32)
+            preds.append(label_pred)
+            gts.append(label)
+        gts = torch.concat(gts,dim=0).detach().cpu().numpy()
+        preds = torch.concat(preds,dim=0).detach().cpu().numpy()
+        report = classification_report(gts,preds,target_names=[f"Class_{c}" for c in range(10)])
+        with open(join(base_dir,'report.txt'),'w') as f:
+            f.write(report)
+        return report
