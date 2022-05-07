@@ -10,8 +10,13 @@ class DecisionTree():
     def fit(self,x,y):
         self.model = self.model.fit(x,y)
     
-    def score(self,x,y):
+    def acc(self,x,y):
         return self.model.score(x,y)
+    
+    def pred(self,x):
+        return self.model.predict(x)
+    
+
 
 class RandomForest(DecisionTree):
     def __init__(self) -> None:

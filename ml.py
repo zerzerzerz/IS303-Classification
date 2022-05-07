@@ -1,11 +1,12 @@
-from ast import arg
+from operator import mod
+from sklearn.metrics import classification_report
 from utils.utils import load_json
 import numpy as np
 from ml.method import DecisionTree, RandomForest, SVM
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--model_type",type=str, choices=["DecisionTree","RandomForest","SVM"], hrlp="Choose ML method")
+parser.add_argument("--model_type",type=str, choices=["DecisionTree","RandomForest","SVM"], help="Choose ML method")
 args = parser.parse_args()
 
 print("Loading train data...")
@@ -44,5 +45,14 @@ else:
 print(f"Running model {args.model_type}")
 model.fit(x_train,y_train)
 print(f"Testing model {args.model_type}")
-acc = model.score(x_test,y_test)
+acc = model.acc(x_test,y_test)
 print(f"Acc={acc}, model_type={args.model_type}")
+
+pred = model.pred(x_test)
+gt = y_test
+
+report = classification_report(gt,pred,target_names=[f"Class_{c}" for c in range(10)])
+print(report)
+
+with open(f'result_ml/{args.model_type}.txt','w') as f:
+    f.write(report)
